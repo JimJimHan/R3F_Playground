@@ -1,0 +1,30 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/workspaces/R3F_Playground/frontend
+      - /workspaces/R3F_Playground/frontend/node_modules
+    environment:
+      # Ensures Vite runs on 0.0.0.0 so it's reachable from host
+      - HOST=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/workspaces/R3F_Playground/backend
+    environment:
+      # Allow Flask to run externally accessible
+      - FLASK_RUN_HOST=0.0.0.0
+    command: ["tail", "-f", "/dev/null"]
+
