@@ -1,57 +1,18 @@
-import { useState, useEffect } from 'react'
-import ContactList from './ContactList.jsx'
-import ContactForm from './ContactForm.jsx'
+import { Canvas } from '@react-three/fiber'
 import './App.css'
 
 function App() {
-  const [contacts, setContacts] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentContact, setCurrentContact] = useState({});
-
-  useEffect(() => {
-    fetchContacts()
-  }, [])
-
-  const fetchContacts = async () => {
-    const response =  await fetch('http://localhost:5000/contacts')
-    const data = await response.json()
-    setContacts(data.contacts)
-    console.log(data.contacts)
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setCurrentContact({});
-  }
-
-  const openCreateModal = () => {
-    if (!isModalOpen) {
-      setIsModalOpen(true);
-    }
-  }
-
-  const openEditModal = (contact) => {
-    if (isModalOpen) return
-    setCurrentContact(contact);
-    setIsModalOpen(true);
-  }
-
-  const onUpdate = () => {
-    closeModal();
-    fetchContacts();
-  }
 
   return (
     <>
-      <ContactList contacts={contacts} updateContact={openEditModal} updateCallback={onUpdate} />
-      <button onClick={openCreateModal}>Create New Contact</button>
-      {isModalOpen && <div className="modal">
-        <div className="modal-content">
-        <span className="close" onClick={closeModal}>&times;</span>
-        <ContactForm existingContact={currentContact} updateCallback={onUpdate}/>
-        </div>
-      </div>
-      }
+      <Canvas className="canvas" camera={{ position: [0, 0, 12], fov: 50 }}>
+        <mesh position={[0, 0, 0]}>
+          <sphereGeometry args={[2, 6, 6]} />
+          <meshStandardMaterial color="blue" roughness={0.4} />
+        </mesh>
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[5, 5, 5]} intensity={0.8} />
+      </Canvas>
     </>
   )
 }
